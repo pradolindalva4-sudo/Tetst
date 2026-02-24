@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DONY BURGUERS SUPREME - KERNEL JDP</title>
+    <style>
+        :root { 
+            --gold-18k: linear-gradient(145deg, #bf953f 0%, #fcf6ba 20%, #b38728 40%, #fcf6ba 60%, #aa771c 80%, #fcf6ba 100%);
+            --gold-solid: #d4af37;
+        }
+        body { 
+            background: #000; color: var(--gold-solid); font-family: 'Arial Black', sans-serif; 
+            margin: 0; padding: 110px 2% 120px 2%; user-select: none; overflow-x: hidden;
+        }
+
+        /* HEADER */
+        .header { 
+            position: fixed; top: 0; left: 0; right: 0; height: 95px; 
+            background: #000; border-bottom: 3px solid var(--gold-solid); z-index: 1000; padding: 0 5%;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #secret-trigger { font-size: 22px; font-weight: 900; color: #fcf6ba; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
+        #total-display { font-size: 28px; font-weight: 900; color: #fff; }
+
+        /* VITRINE OTIMIZADA */
+        .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .card { 
+            background: #050505; border: 1px solid #1a1a1a; border-radius: 12px; 
+            overflow: hidden; position: relative; height: 220px; transform: translateZ(0);
+        }
+        .card img { width: 100%; height: 100%; object-fit: cover; }
+        .card-info { 
+            position: absolute; bottom: 0; width: 100%; 
+            background: rgba(0,0,0,0.85); padding: 8px 0; text-align: center; 
+        }
+        .price { font-size: 1.2rem; color: #fcf6ba; font-weight: 900; }
+
+        /* BOTÃO CONFIRMAR */
+        .btn-confirmar { 
+            position: fixed; bottom: 20px; left: 5%; width: 90%; 
+            background: var(--gold-18k); color: #000; padding: 20px; border: none; 
+            border-radius: 15px; font-weight: 900; font-size: 1.6rem; z-index: 1100; 
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+        }
+
+        /* ESCRITÓRIO JDP */
+        #escritorio-jdp { 
+            display: none; position: fixed; inset: 0; background: #000; 
+            z-index: 10000; padding: 20px; overflow-y: auto; border: 4px solid var(--gold-solid); 
+        }
+        .section { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #050505; }
+        input { width: 90%; background: #111; border: 1px solid #444; color: #fff; padding: 12px; margin: 5px 0; border-radius: 5px; }
+        .btn-jdp { background: var(--gold-18k); color: #000; border: none; padding: 15px; width: 100%; font-weight: 900; margin-top: 10px; border-radius: 5px; }
+        
+        /* LISTA DE PEDIDOS */
+        .pedido-box { border-left: 4px solid var(--gold-solid); background: #111; padding: 15px; margin: 10px 0; position: relative; border-radius: 0 10px 10px 0; }
+        .btn-excluir-pedido { position: absolute; right: 10px; top: 10px; color: #ff4444; border: 1px solid #ff4444; background: none; font-weight: bold; padding: 5px 10px; border-radius: 5px; }
+
+        /* ANIMAÇÃO SUPREME OTIMIZADA */
+        #overlay-sucesso { 
+            display: none; position: fixed; inset: 0; background: #000; z-index: 12000; 
+            justify-content: center; align-items: center; flex-direction: column;
+        }
+        .gold-vibrate { 
+            font-size: 40px; font-weight: 900; background: var(--gold-18k);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: vibrate 0.15s infinite linear, reflection 1.5s infinite ease-in-out;
+            text-align: center; will-change: transform, filter;
+        }
+
+        @keyframes vibrate {
+            0% { transform: translate(0) rotate(0deg); }
+            25% { transform: translate(2px, -2px) rotate(1deg); }
+            50% { transform: translate(-2px, 2px) rotate(-1deg); }
+            75% { transform: translate(2px, 2px) rotate(0deg); }
+            100% { transform: translate(0) rotate(0deg); }
+        }
+
+        @keyframes reflection {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 5px var(--gold-solid)); }
+            50% { filter: brightness(1.8) drop-shadow(0 0 25px var(--gold-solid)); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div onclick="contarCliques()">
+            <div style="font-size:9px; letter-spacing: 1px;">JDP INDUSTRIAL v13.6</div>
+            <div id="secret-trigger">DONY BURGUERS</div>
+        </div>
+        <div id="total-display">R$ 0,00</div>
+    </div>
+
+    <div class="grid-container" id="vitrine"></div>
+
+    <button class="btn-confirmar" onclick="finalizarPedido()">CONFIRMAR PEDIDO</button>
+
+    <div id="escritorio-jdp">
+        <h2 style="text-align:center; color:#fcf6ba; text-transform: uppercase;">Painel de Controle JDP</h2>
+        
+        <div class="section">
+            <h3 style="color:var(--gold-solid)">📥 PEDIDOS EM ABERTO</h3>
+            <div id="lista-pedidos"></div>
+        </div>
+
+        <div class="section">
+            <h3>📦 CADASTRAR PRODUTO</h3>
+            <input type="text" id="inp-nome" placeholder="Nome do Lanche">
+            <input type="number" id="inp-preco" placeholder="Preço (Ex: 35.00)">
+            <input type="number" id="inp-estoque" placeholder="Qtd em Estoque">
+            <p style="font-size:11px; color:#fff;">FOTO DO PRODUTO:</p>
+            <input type="file" id="inp-file" accept="image/*">
+            <button class="btn-jdp" onclick="processarESalvar()">GRAVAR NO SISTEMA</button>
+        </div>
+
+        <div class="section">
+            <h3>📊 GESTÃO DE ESTOQUE</h3>
+            <div id="lista-estoque"></div>
+        </div>
+
+        <button onclick="fecharEscritorio()" class="btn-jdp" style="background:#222; color:#fff;">SAIR DO SISTEMA</button>
+    </div>
+
+    <div id="overlay-sucesso">
+        <div class="gold-vibrate">DONY-BURGUERS</div>
+    </div>
+
+<script>
+    var db;
+    var carrinho = [];
+    var cliques = 0;
+
+    // MOTOR INDEXEDDB
+    var request = indexedDB.open("JDP_Industrial_DB", 3);
+    request.onupgradeneeded = function(e) {
+        var database = e.target.result;
+        if(!database.objectStoreNames.contains("produtos")) database.createObjectStore("produtos", { keyPath: "id", autoIncrement: true });
+        if(!database.objectStoreNames.contains("pedidos")) database.createObjectStore("pedidos", { keyPath: "id", autoIncrement: true });
+    };
+    request.onsuccess = function(e) { db = e.target.result; renderizarVitrine(); };
+
+    function contarCliques() {
+        cliques++;
+        if(cliques >= 3) {
+            var p = prompt("ACESSO RESTRITO JDP:");
+            if(p === "drkling2025") abrirEscritorio();
+            cliques = 0;
+        }
+    }
+
+    function abrirEscritorio() {
+        document.getElementById('escritorio-jdp').style.display = 'block';
+        listarPedidos();
+        listarEstoque();
+    }
+
+    function fecharEscritorio() {
+        document.getElementById('escritorio-jdp').style.display = 'none';
+        renderizarVitrine();
+    }
+
+    // COMPRESSOR INDUSTRIAL DE IMAGENS (EVITA TRAVAMENTOS)
+    function processarESalvar() {
+        var n = document.getElementById('inp-nome').value;
+        var p = document.getElementById('inp-preco').value;
+        var e = document.getElementById('inp-estoque').value;
+        var f = document.getElementById('inp-file').files[0];
+
+        if(!n || !p || !f) return alert("Preencha tudo!");
+
+        var reader = new FileReader();
+        reader.onload = function(event) {
+            var img = new Image();
+            img.onload = function() {
+                var canvas = document.createElement('canvas');
+                var ctx = canvas.getContext('2d');
+                var maxW = 400; // Tamanho otimizado para mobile
+                var scale = maxW / img.width;
+                canvas.width = maxW;
+                canvas.height = img.height * scale;
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.6); // Qualidade balanceada
+                
+                var trans = db.transaction(["produtos"], "readwrite");
+                trans.objectStore("produtos").add({
+                    nome: n, preco: parseFloat(p), estoque: parseInt(e), imagem: dataUrl
+                });
+                trans.oncomplete = function() { 
+                    alert("PRODUTO CADASTRADO!"); 
+                    listarEstoque();
+                    document.getElementById('inp-nome').value = "";
+                    document.getElementById('inp-preco').value = "";
+                };
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(f);
+    }
+
+    function renderizarVitrine() {
+        var v = document.getElementById('vitrine');
+        v.innerHTML = "";
+        db.transaction("produtos").objectStore("produtos").openCursor().onsuccess = function(e) {
+            var cursor = e.target.result;
+            if(cursor) {
+                var p = cursor.value;
+                var card = document.createElement('div');
+                card.className = 'card';
+                if(p.estoque <= 0) card.style.opacity = "0.2";
+                card.onclick = function() { addCarrinho(p); };
+                card.innerHTML = '<img src="'+p.imagem+'"><div class="card-info"><h4>'+p.nome+'</h4><div class="price">R$ '+p.preco.toFixed(2)+'</div></div>';
+                v.appendChild(card);
+                cursor.continue();
+            }
+        };
+    }
+
+    function addCarrinho(p) {
+        if(p.estoque <= 0) return alert("Produto Esgotado!");
+        carrinho.push(p);
+        atualizarTotal();
+    }
+
+    function atualizarTotal() {
+        var t = 0;
+        for(var i=0; i<carrinho.length; i++) t += carrinho[i].preco;
+        document.getElementById('total-display').innerHTML = "R$ " + t.toFixed(2);
+    }
+
+    function finalizarPedido() {
+        if(carrinho.length === 0) return;
+
+        var trans = db.transaction(["produtos", "pedidos"], "readwrite");
+        var prodStore = trans.objectStore("produtos");
+        var pedStore = trans.objectStore("pedidos");
+
+        var resumoItens = "";
+        carrinho.forEach(function(item) {
+            resumoItens += item.nome + " | ";
+            prodStore.get(item.id).onsuccess = function(e) {
+                var p = e.target.result;
+                if(p) {
+                    p.estoque--;
+                    prodStore.put(p);
+                }
+            };
+        });
+
+        pedStore.add({ 
+            itens: resumoItens, 
+            total: document.getElementById('total-display').innerHTML, 
+            data: new Date().toLocaleString('pt-BR') 
+        });
+
+        trans.oncomplete = function() {
+            var overlay = document.getElementById('overlay-sucesso');
+            overlay.style.display = 'flex';
+            setTimeout(function() {
+                overlay.style.display = 'none';
+                carrinho = [];
+                atualizarTotal();
+                renderizarVitrine();
+            }, 3500);
+        };
+    }
+
+    function listarPedidos() {
+        var container = document.getElementById('lista-pedidos');
+        container.innerHTML = "";
+        db.transaction("pedidos").objectStore("pedidos").openCursor(null, 'prev').onsuccess = function(e) {
+            var cursor = e.target.result;
+            if(cursor) {
+                var ped = cursor.value;
+                var div = document.createElement('div');
+                div.className = 'pedido-box';
+                div.innerHTML = '<strong>📅 '+ped.data+'</strong><br><p>'+ped.itens+'</p><span style="color:#fcf6ba; font-size:1.2rem;">'+ped.total+'</span>' +
+                                '<button class="btn-excluir-pedido" onclick="removerPedido('+ped.id+')">X</button>';
+                container.appendChild(div);
+                cursor.continue();
+            }
+        };
+    }
+
+    function removerPedido(id) {
+        if(confirm("Excluir este pedido da lista?")) {
+            db.transaction(["pedidos"], "readwrite").objectStore("pedidos").delete(id).onsuccess = function() {
+                listarPedidos();
+            };
+        }
+    }
+
+    function listarEstoque() {
+        var container = document.getElementById('lista-estoque');
+        container.innerHTML = "";
+        db.transaction("produtos").objectStore("produtos").openCursor().onsuccess = function(e) {
+            var cursor = e.target.result;
+            if(cursor) {
+                var p = cursor.value;
+                var div = document.createElement('div');
+                div.style = "padding:10px; border-bottom:1px solid #222; display:flex; justify-content:space-between; align-items:center;";
+                div.innerHTML = '<span>'+p.nome+' (Qtd: '+p.estoque+')</span>' + 
+                                '<button onclick="excluirProd('+p.id+')" style="color:red; background:none; border:1px solid red; padding:5px;">EXCLUIR</button>';
+                container.appendChild(div);
+                cursor.continue();
+            }
+        };
+    }
+
+    function excluirProd(id) {
+        if(confirm("Remover este produto permanentemente?")) {
+            db.transaction(["produtos"], "readwrite").objectStore("produtos").delete(id).onsuccess = function() {
+                listarEstoque();
+            };
+        }
+    }
+</script>
+</body>
+</html>
