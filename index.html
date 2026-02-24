@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DONY BURGUERS - VENDEDOR v13.8</title>
-    <!-- FIREBASE CORE -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <title>DONY BURGUERS SUPREME - KERNEL JDP</title>
     <style>
         :root { 
             --gold-18k: linear-gradient(145deg, #bf953f 0%, #fcf6ba 20%, #b38728 40%, #fcf6ba 60%, #aa771c 80%, #fcf6ba 100%);
@@ -14,112 +11,173 @@
         }
         body { 
             background: #000; color: var(--gold-solid); font-family: 'Arial Black', sans-serif; 
-            margin: 0; padding: 110px 2% 120px 2%; user-select: none;
+            margin: 0; padding: 110px 2% 120px 2%; user-select: none; overflow-x: hidden;
         }
+
+        /* HEADER */
         .header { 
             position: fixed; top: 0; left: 0; right: 0; height: 95px; 
             background: #000; border-bottom: 3px solid var(--gold-solid); z-index: 1000; padding: 0 5%;
             display: flex; justify-content: space-between; align-items: center;
         }
+        #secret-trigger { font-size: 22px; font-weight: 900; color: #fcf6ba; text-shadow: 0 0 10px rgba(212,175,55,0.5); }
         #total-display { font-size: 28px; font-weight: 900; color: #fff; }
+
+        /* VITRINE */
         .grid-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .card { 
             background: #050505; border: 1px solid #1a1a1a; border-radius: 12px; 
-            overflow: hidden; position: relative; height: 200px;
+            overflow: hidden; position: relative; height: 220px; transform: translateZ(0);
         }
         .card img { width: 100%; height: 100%; object-fit: cover; }
-        .card-info { position: absolute; bottom: 0; width: 100%; background: rgba(0,0,0,0.85); padding: 5px 0; text-align: center; }
+        .card-info { 
+            position: absolute; bottom: 0; width: 100%; 
+            background: rgba(0,0,0,0.85); padding: 8px 0; text-align: center; 
+        }
+
+        /* BOTÃO CONFIRMAR */
         .btn-confirmar { 
             position: fixed; bottom: 20px; left: 5%; width: 90%; 
             background: var(--gold-18k); color: #000; padding: 20px; border: none; 
             border-radius: 15px; font-weight: 900; font-size: 1.6rem; z-index: 1100; 
         }
-        #escritorio-jdp { display: none; position: fixed; inset: 0; background: #000; z-index: 10000; padding: 20px; overflow-y: auto; }
+
+        /* ESCRITÓRIO JDP */
+        #escritorio-jdp { 
+            display: none; position: fixed; inset: 0; background: #000; 
+            z-index: 10000; padding: 20px; overflow-y: auto; border: 4px solid var(--gold-solid); 
+        }
+        .section { border: 1px solid #333; padding: 15px; margin-bottom: 20px; border-radius: 10px; background: #050505; }
+        .pedido-box { border-left: 4px solid var(--gold-solid); background: #111; padding: 15px; margin: 10px 0; position: relative; }
+        .btn-excluir-pedido { position: absolute; right: 10px; top: 10px; color: #ff4444; border: 1px solid #ff4444; background: none; font-weight: bold; padding: 5px; }
+
+        /* ANIMAÇÃO SUPREME */
+        #overlay-sucesso { 
+            display: none; position: fixed; inset: 0; background: #000; z-index: 12000; 
+            justify-content: center; align-items: center;
+        }
+        .gold-vibrate { 
+            font-size: 40px; font-weight: 900; background: var(--gold-18k);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: vibrate 0.1s infinite; text-align: center;
+        }
+
+        @keyframes vibrate {
+            0% { transform: translate(0); }
+            50% { transform: translate(3px, 3px); }
+            100% { transform: translate(0); }
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <div onclick="contarCliques()">
-            <div style="font-size:9px;">JDP KERNEL v13.8</div>
-            <div style="font-size:20px; color:#fcf6ba;">DONY BURGUERS</div>
+            <div style="font-size:9px;">JDP INDUSTRIAL v13.7</div>
+            <div id="secret-trigger">DONY BURGUERS</div>
         </div>
         <div id="total-display">R$ 0,00</div>
     </div>
 
     <div class="grid-container" id="vitrine"></div>
 
-    <button class="btn-confirmar" onclick="finalizarPedido()">ENVIAR PARA COZINHA</button>
+    <button class="btn-confirmar" onclick="finalizarPedido()">CONFIRMAR PEDIDO</button>
 
-    <!-- PAINEL ADMINISTRATIVO -->
     <div id="escritorio-jdp">
-        <h2 style="color:var(--gold-solid)">CADASTRO DE PRODUTOS</h2>
-        <input type="text" id="inp-nome" placeholder="Nome" style="width:100%; padding:10px; margin:5px 0;">
-        <input type="number" id="inp-preco" placeholder="Preço" style="width:100%; padding:10px; margin:5px 0;">
-        <input type="file" id="inp-file" accept="image/*" style="margin:10px 0;">
-        <button onclick="salvarProduto()" style="width:100%; padding:15px; background:var(--gold-18k); font-weight:900;">GRAVAR</button>
-        <button onclick="document.getElementById('escritorio-jdp').style.display='none'" style="width:100%; padding:10px; margin-top:20px;">VOLTAR</button>
+        <h2 style="text-align:center; color:#fcf6ba;">PAINEL DE CONTROLE JDP</h2>
+        <div class="section">
+            <h3 style="color:var(--gold-solid)">📥 PEDIDOS NA COZINHA</h3>
+            <div id="lista-pedidos"></div>
+        </div>
+        <div class="section">
+            <h3>📦 CADASTRAR PRODUTO</h3>
+            <input type="text" id="inp-nome" placeholder="Nome" style="width:90%; padding:10px; margin:5px 0;">
+            <input type="number" id="inp-preco" placeholder="Preço" style="width:90%; padding:10px; margin:5px 0;">
+            <input type="number" id="inp-estoque" placeholder="Estoque" style="width:90%; padding:10px; margin:5px 0;">
+            <input type="file" id="inp-file" accept="image/*" style="margin:10px 0;">
+            <button onclick="processarESalvar()" style="width:100%; padding:15px; background:var(--gold-18k); font-weight:900;">GRAVAR</button>
+        </div>
+        <button onclick="fecharEscritorio()" style="width:100%; padding:15px; background:#222; color:#fff; margin-top:10px;">SAIR</button>
+    </div>
+
+    <div id="overlay-sucesso">
+        <div class="gold-vibrate">DONY-BURGUERS</div>
     </div>
 
 <script>
-    // CONFIGURAÇÃO FIREBASE (IGUAL À SUA COMANDA)
-    const firebaseConfig = { 
-        apiKey: "AIzaSyCEdXF7ScnMYz0Ce0OW-B_UJ8Bm5Pl9m8o", 
-        databaseURL: "https://dony-burguers-default-rtdb.firebaseio.com" 
-    };
-    firebase.initializeApp(firebaseConfig);
-    const rtdb = firebase.database();
-
     var db;
     var carrinho = [];
     var cliques = 0;
     var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // SOM DE ALERTA (PARA O CABO P2)
-    function bipCozinha() {
-        var osc = audioCtx.createOscillator();
-        var gain = audioCtx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.5);
+    // MOTOR DE SOM INDUSTRIAL (SINTETIZADOR)
+    function tocarAlertaCozinha() {
+        var oscillator = audioCtx.createOscillator();
+        var gainNode = audioCtx.createGain();
+
+        oscillator.type = 'square'; // Som industrial tipo "buzzer"
+        oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota Lá (agudo)
+        
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 1);
+
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        oscillator.start();
+        oscillator.stop(audioCtx.currentTime + 1); // Toca por 1 segundo
     }
 
-    // BANCO LOCAL (INDEXEDDB)
-    var request = indexedDB.open("JDP_Industrial_DB", 5);
-    request.onupgradeneeded = (e) => {
-        var d = e.target.result;
-        if(!d.objectStoreNames.contains("produtos")) d.createObjectStore("produtos", { keyPath: "id", autoIncrement: true });
+    // BANCO DE DADOS
+    var request = indexedDB.open("JDP_Industrial_DB", 4);
+    request.onupgradeneeded = function(e) {
+        var database = e.target.result;
+        if(!database.objectStoreNames.contains("produtos")) database.createObjectStore("produtos", { keyPath: "id", autoIncrement: true });
+        if(!database.objectStoreNames.contains("pedidos")) database.createObjectStore("pedidos", { keyPath: "id", autoIncrement: true });
     };
-    request.onsuccess = (e) => { db = e.target.result; renderizarVitrine(); };
+    request.onsuccess = function(e) { db = e.target.result; renderizarVitrine(); };
 
     function contarCliques() {
         cliques++;
         if(cliques >= 3) {
-            if(prompt("SENHA JDP:") === "drkling2025") document.getElementById('escritorio-jdp').style.display='block';
+            var p = prompt("SENHA JDP:");
+            if(p === "drkling2025") abrirEscritorio();
             cliques = 0;
         }
     }
 
-    function salvarProduto() {
+    function abrirEscritorio() {
+        document.getElementById('escritorio-jdp').style.display = 'block';
+        listarPedidos();
+    }
+
+    function fecharEscritorio() {
+        document.getElementById('escritorio-jdp').style.display = 'none';
+        renderizarVitrine();
+    }
+
+    function processarESalvar() {
         var n = document.getElementById('inp-nome').value;
         var p = document.getElementById('inp-preco').value;
+        var e = document.getElementById('inp-estoque').value;
         var f = document.getElementById('inp-file').files[0];
+
         var reader = new FileReader();
-        reader.onload = (ev) => {
+        reader.onload = function(event) {
             var img = new Image();
-            img.onload = () => {
+            img.onload = function() {
                 var canvas = document.createElement('canvas');
-                canvas.width = 300; canvas.height = 300;
-                canvas.getContext('2d').drawImage(img, 0, 0, 300, 300);
-                db.transaction("produtos", "readwrite").objectStore("produtos").add({
-                    nome: n, preco: parseFloat(p), imagem: canvas.toDataURL('image/jpeg', 0.6)
-                }).oncomplete = () => { alert("OK!"); location.reload(); };
+                var ctx = canvas.getContext('2d');
+                canvas.width = 400;
+                canvas.height = img.height * (400 / img.width);
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                var dataUrl = canvas.toDataURL('image/jpeg', 0.6);
+                
+                var trans = db.transaction(["produtos"], "readwrite");
+                trans.objectStore("produtos").add({ nome: n, preco: parseFloat(p), estoque: parseInt(e), imagem: dataUrl });
+                trans.oncomplete = function() { alert("CADASTRADO!"); };
             };
-            img.src = ev.target.result;
+            img.src = event.target.result;
         };
         reader.readAsDataURL(f);
     }
@@ -127,14 +185,17 @@
     function renderizarVitrine() {
         var v = document.getElementById('vitrine');
         v.innerHTML = "";
-        db.transaction("produtos").objectStore("produtos").openCursor().onsuccess = (e) => {
+        db.transaction("produtos").objectStore("produtos").openCursor().onsuccess = function(e) {
             var cursor = e.target.result;
             if(cursor) {
                 var p = cursor.value;
                 var card = document.createElement('div');
                 card.className = 'card';
-                card.onclick = () => { carrinho.push(p); atualizarTotal(); };
-                card.innerHTML = `<img src="${p.imagem}"><div class="card-info"><b>${p.nome}</b><br>R$ ${p.preco.toFixed(2)}</div>`;
+                if(p.estoque <= 0) card.style.opacity = "0.2";
+                card.onclick = function() { 
+                    if(p.estoque > 0) { carrinho.push(p); atualizarTotal(); }
+                };
+                card.innerHTML = '<img src="'+p.imagem+'"><div class="card-info"><h4>'+p.nome+'</h4><div style="color:#fcf6ba">R$ '+p.preco.toFixed(2)+'</div></div>';
                 v.appendChild(card);
                 cursor.continue();
             }
@@ -150,26 +211,55 @@
     function finalizarPedido() {
         if(carrinho.length === 0) return;
 
-        // 1. TOCA O BIP (VIA CABO P2)
-        bipCozinha();
+        // DISPARAR ALERTA SONORO PARA A COZINHA
+        tocarAlertaCozinha();
 
-        // 2. FORMATA PARA O PADRÃO DA SUA COMANDA
-        const pedidoParaCozinha = {
-            data: new Date().toLocaleString('pt-BR'),
-            total: document.getElementById('total-display').innerHTML,
-            itens: carrinho.map(item => ({ nome: item.nome }))
-        };
+        var trans = db.transaction(["produtos", "pedidos"], "readwrite");
+        var prodStore = trans.objectStore("produtos");
+        var pedStore = trans.objectStore("pedidos");
 
-        // 3. ENVIA PARA O FIREBASE (PRECISA DE UMA "GOTA" DE INTERNET)
-        rtdb.ref('PEDIDOS_PRODUCAO').push(pedidoParaCozinha)
-        .then(() => {
-            alert("PEDIDO ENVIADO À COZINHA!");
-            carrinho = [];
-            atualizarTotal();
-        })
-        .catch((err) => {
-            alert("ERRO: SEM INTERNET! O pedido não subiu para a tela, mas o som tocou.");
+        var nomes = "";
+        carrinho.forEach(item => {
+            nomes += item.nome + " | ";
+            prodStore.get(item.id).onsuccess = function(e) {
+                var p = e.target.result;
+                p.estoque--;
+                prodStore.put(p);
+            };
         });
+
+        pedStore.add({ itens: nomes, total: document.getElementById('total-display').innerHTML, data: new Date().toLocaleString() });
+
+        trans.oncomplete = function() {
+            document.getElementById('overlay-sucesso').style.display = 'flex';
+            setTimeout(() => {
+                document.getElementById('overlay-sucesso').style.display = 'none';
+                carrinho = [];
+                atualizarTotal();
+                renderizarVitrine();
+            }, 3000);
+        };
+    }
+
+    function listarPedidos() {
+        var container = document.getElementById('lista-pedidos');
+        container.innerHTML = "";
+        db.transaction("pedidos").objectStore("pedidos").openCursor(null, 'prev').onsuccess = function(e) {
+            var cursor = e.target.result;
+            if(cursor) {
+                var ped = cursor.value;
+                var div = document.createElement('div');
+                div.className = 'pedido-box';
+                div.innerHTML = '<strong>'+ped.data+'</strong><br>'+ped.itens+'<br>'+ped.total +
+                                '<button class="btn-excluir-pedido" onclick="removerPedido('+ped.id+')">X</button>';
+                container.appendChild(div);
+                cursor.continue();
+            }
+        };
+    }
+
+    function removerPedido(id) {
+        db.transaction(["pedidos"], "readwrite").objectStore("pedidos").delete(id).onsuccess = function() { listarPedidos(); };
     }
 </script>
 </body>
